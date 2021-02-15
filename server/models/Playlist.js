@@ -1,22 +1,16 @@
 const mongoose = require('mongoose'); // Erase if already required
 
 // Declare the Schema of the Mongo model
-var userSchema = new mongoose.Schema({
+var levelSchema = new mongoose.Schema({
 	name: {
 		type: String,
 		required: true,
-		unique: true,
 	},
-	email: {
-		type: String,
-		required: true,
-		unique: true,
+	user: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User',
 	},
-	password: {
-		type: String,
-		required: true,
-	},
-	favourites: [
+	levels: [
 		{
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Level',
@@ -26,4 +20,4 @@ var userSchema = new mongoose.Schema({
 });
 
 //Export the model
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Playlist', playlistSchema);
