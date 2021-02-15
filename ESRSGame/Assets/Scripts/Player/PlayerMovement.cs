@@ -38,6 +38,7 @@ namespace Player
         private void RotateToDirection()
         {
             Vector3 mousePos = UtilsClass.GetMouseWorldPosition();
+            if (float.IsNegativeInfinity(mousePos.x)) return;
             mousePos.y = transform.position.y;
             transform.LookAt(mousePos);
             Debug.DrawRay(transform.position,transform.forward*100,Color.red);
