@@ -1,7 +1,7 @@
 const mongoose = require('mongoose'); // Erase if already required
 
 // Declare the Schema of the Mongo model
-var levelSchema = new mongoose.Schema({
+var playlistSchema = new mongoose.Schema({
 	name: {
 		type: String,
 		required: true,
@@ -20,4 +20,4 @@ var levelSchema = new mongoose.Schema({
 });
 
 //Export the model
-module.exports = mongoose.model('Playlist', playlistSchema);
+mongoose.model('Playlist', playlistSchema);
