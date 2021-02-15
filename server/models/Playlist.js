@@ -20,4 +20,4 @@ var playlistSchema = new mongoose.Schema({
 });
 
 //Export the model
-module.exports = mongoose.model('Playlist', playlistSchema);
+mongoose.model('Playlist', playlistSchema);
