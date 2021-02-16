@@ -18,13 +18,18 @@ namespace Grid
         
         private int width;
         private int height;
+        
+        [SerializeField]
         private TGridObject[,] gridArray;
         private TextMesh[,] debugTextArray;
         private float cellSize;
         private Vector3 originPosition;
         
         
-        public GameGrid(int width, int height, float cellSize, Vector3 originPosition, Func<GameGrid<TGridObject>,int,int, TGridObject, bool showDebug = true)
+        public GameGrid(int width, int height, float cellSize, Vector3 originPosition, Func<GameGrid<TGridObject>,int,int, TGridObject>  CreateGridObject, bool showDebug = true)
+        
+        
+        
         {
             this.width = width;
             this.height = height;
@@ -38,7 +43,7 @@ namespace Grid
             {
                 for (int z = 0; z < gridArray.GetLength(1); z++)
                 {
-                    gridArray[x, z] = CreatGridObject();
+                    gridArray[x, z] = CreateGridObject(this,x,z);
                 }
                 
             }
@@ -65,12 +70,17 @@ namespace Grid
             };
         }
 
-        private Vector3 GetWorldPosition(int x, int z)
+        public void TriggerGridObjectChanged(int x, int z)
+        {
+            OnGridValueChanged?.Invoke(this, new OnGridValueChangedEventArgs {x = x, z = z});
+        }
+
+        public Vector3 GetWorldPosition(int x, int z)
         {
             return new Vector3(x,0, z) * cellSize + originPosition;
         }
 
-        private void GetXZ(Vector3 worldPostion, out int x, out int z)
+        public void GetXZ(Vector3 worldPostion, out int x, out int z)
         {
             x = Mathf.FloorToInt((worldPostion.x-originPosition.x) / cellSize);
             z = Mathf.FloorToInt((worldPostion.z-originPosition.z) / cellSize);

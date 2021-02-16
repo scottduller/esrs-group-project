@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ef5af70ebb84304996f5e06599715c1, type: 3}
+  m_Name: TestSquare2
+  m_EditorClassIdentifier: 
+  nameString: Test  Straight [1,2]
+  prefab: {fileID: 1320419481235671564, guid: 97db220bc0f94ce439482179ebfd5d8f, type: 3}
+  visual: {fileID: 6590255710508878991, guid: 6a62e1aaf5820404d88d7d924dfc37ab, type: 3}
+  width: 1
+  height: 2
+  levelTheme: 0
