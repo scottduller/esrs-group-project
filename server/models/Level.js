@@ -32,4 +32,4 @@ const levelSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-mongoose.model('Level', levelSchema);
+module.exports = mongoose.model('Level', levelSchema);

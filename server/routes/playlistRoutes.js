@@ -3,7 +3,7 @@ const requireLogin = require('../middleware/requireLogin');
 const express = require('express');
 const router = express.Router();
 
-const Playlist = mongoose.model('Playlist');
+const Playlist = require('../models/Playlist');
 
 router.get('/:id', requireLogin, async (req, res) => {
 	const playlist = await Playlist.findOne({

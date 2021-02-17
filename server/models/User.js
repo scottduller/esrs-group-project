@@ -1,29 +1,63 @@
-const mongoose = require('mongoose'); // Erase if already required
+const mongoose = require('mongoose');
 
-// Declare the Schema of the Mongo model
-var userSchema = new mongoose.Schema({
-	name: {
+const ThirdPartyProviderSchema = new mongoose.Schema({
+	provider_name: {
 		type: String,
-		required: true,
-		unique: true,
+		default: null,
 	},
-	email: {
+	provider_id: {
 		type: String,
-		required: true,
-		unique: true,
+		default: null,
 	},
-	password: {
-		type: String,
-		required: true,
+	provider_data: {
+		type: {},
+		default: null,
 	},
-	favourites: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Level',
-			required: true,
-		},
-	],
 });
 
-//Export the model
-mongoose.model('User', userSchema);
+// Create Schema
+const UserSchema = new mongoose.Schema(
+	{
+		name: {
+			type: String,
+		},
+		email: {
+			type: String,
+			required: true,
+			unique: true,
+		},
+		email_is_verified: {
+			type: Boolean,
+			default: false,
+		},
+		password: {
+			type: String,
+		},
+		favourites: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Level',
+				required: true,
+			},
+		],
+		referral_code: {
+			type: String,
+			default: function () {
+				let hash = 0;
+				for (let i = 0; i < this.email.length; i++) {
+					hash = this.email.charCodeAt(i) + ((hash << 5) - hash);
+				}
+				let res = (hash & 0x00ffffff).toString(16).toUpperCase();
+				return '00000'.substring(0, 6 - res.length) + res;
+			},
+		},
+		referred_by: {
+			type: String,
+			default: null,
+		},
+		third_party_auth: [ThirdPartyProviderSchema],
+	},
+	{ timestamps: true, strict: false }
+);
+
+module.exports = User = mongoose.model('users', UserSchema);
