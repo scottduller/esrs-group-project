@@ -1,19 +1,32 @@
-const mongoose = require('mongoose'); // Erase if already required
+const mongoose = require('mongoose');
 
-// Declare the Schema of the Mongo model
-const userSchema = new mongoose.Schema(
+const ThirdPartyProviderSchema = new mongoose.Schema({
+	provider_name: {
+		type: String,
+		default: null,
+	},
+	provider_id: {
+		type: String,
+		default: null,
+	},
+	provider_data: {
+		type: {},
+		default: null,
+	},
+});
+
+// Create Schema
+const UserSchema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
-			required: true,
-			unique: true,
 		},
 		email: {
 			type: String,
 			required: true,
 			unique: true,
 		},
-		email_verified: {
+		email_is_verified: {
 			type: Boolean,
 			default: false,
 		},
@@ -29,7 +42,7 @@ const userSchema = new mongoose.Schema(
 		],
 		referral_code: {
 			type: String,
-			default: () => {
+			default: function () {
 				let hash = 0;
 				for (let i = 0; i < this.email.length; i++) {
 					hash = this.email.charCodeAt(i) + ((hash << 5) - hash);
@@ -42,25 +55,9 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			default: null,
 		},
-		third_party_auth: [ProviderSchema],
+		third_party_auth: [ThirdPartyProviderSchema],
 	},
 	{ timestamps: true, strict: false }
 );
 
-const ProviderSchema = new mongoose.Schema({
-	provider_name: {
-		type: String,
-		default: null,
-	},
-	provider_id: {
-		type: String,
-		default: null,
-	},
-	proider_data: {
-		type: {},
-		default: null,
-	},
-});
-
-//Export the model
-module.exports = mongoose.model('User', userSchema);
+module.exports = User = mongoose.model('users', UserSchema);

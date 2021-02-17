@@ -1,15 +1,17 @@
 const express = require('express');
-const morgan = require('morgan');
 const cookieSession = require('cookie-session');
-const passport = require('passport');
+
+const morgan = require('morgan');
+
+const passport = require('./utils/passport');
 const connectDB = require('./config/db');
 const keys = require('./config/keys');
-
-const app = express();
 
 require('./models/Level');
 require('./models/User');
 require('./models/Playlist');
+
+const app = express();
 
 connectDB();
 

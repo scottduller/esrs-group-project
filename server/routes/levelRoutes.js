@@ -3,7 +3,7 @@ const requireLogin = require('../middleware/requireLogin');
 const express = require('express');
 const router = express.Router();
 
-const Level = mongoose.model('Level');
+const Level = require('../models/Level');
 
 router.get('/:id', requireLogin, async (req, res) => {
 	const level = await Level.findOne({
