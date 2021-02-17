@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ef5af70ebb84304996f5e06599715c1, type: 3}
-  m_Name: TestSquare1
+  m_Name: TestBlock
   m_EditorClassIdentifier: 
-  nameString: Test  Straight [1,1]
-  prefab: {fileID: 1320419481235671564, guid: 21720c205653228499bf0254dfdbd666, type: 3}
-  visual: {fileID: 1687889952675107902, guid: 2541ecda509f1e749a9299949431971a, type: 3}
+  nameString: Test Block
+  prefab: {fileID: 5140958657712553642, guid: 3d4cdde08fb8aad4282b818255dbfcd6, type: 3}
+  visual: {fileID: 4945135105507578675, guid: ce585a50b7403a84fab995da1ab44efa, type: 3}
   width: 1
   height: 1
   levelTheme: 0

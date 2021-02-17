@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ef5af70ebb84304996f5e06599715c1, type: 3}
-  m_Name: TestSquare2
+  m_Name: OrangeBlock
   m_EditorClassIdentifier: 
-  nameString: Test  Straight [1,2]
-  prefab: {fileID: 1320419481235671564, guid: 97db220bc0f94ce439482179ebfd5d8f, type: 3}
-  visual: {fileID: 6590255710508878991, guid: 6a62e1aaf5820404d88d7d924dfc37ab, type: 3}
+  nameString: OrangeBlock
+  prefab: {fileID: 5140958657712553642, guid: 241527493312c19499e0bebe8d0fac0e, type: 3}
+  visual: {fileID: 4945135105507578675, guid: ba283f94e7a239148b12ec2b550496a3, type: 3}
   width: 1
-  height: 2
+  height: 1
   levelTheme: 0

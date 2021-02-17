@@ -4,25 +4,16 @@ using UnityEngine;
 
 public static class UtilsClass
 {
-    private static Camera mainCamera;
+    private static Camera _mainCamera;
 
     public static Vector3 GetMouseWorldPosition()
     {
-        if (mainCamera == null)
-        {
-            mainCamera = Camera.main;
-        }
+        if (_mainCamera == null) _mainCamera = Camera.main;
 
         Ray castPoint = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(castPoint, out hit, Mathf.Infinity))
-        {
-            return hit.point;
-        }
+        if (Physics.Raycast(castPoint, out hit, Mathf.Infinity)) return hit.point;
 
         return Vector3.negativeInfinity;
-
-
-        
     }
 }

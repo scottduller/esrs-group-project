@@ -6,7 +6,7 @@ using UnityEngine;
 namespace SOScripts
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/LevelTile")]
-    public class LevelTileSo : ScriptableObject
+    public class PlacedObjectTypeSO : ScriptableObject
     {
         public string nameString;
         public Transform prefab;
@@ -44,6 +44,31 @@ namespace SOScripts
             RIGHT =3
         }
 
+        public int GetRotationAngle(Dir dir)
+        {
+            switch (dir)
+            {
+                default:
+                case Dir.DOWN: return 0;
+                case Dir.UP: return 180;
+                case Dir.LEFT: return 90;
+                case Dir.RIGHT: return 270;
+
+            }
+        }
+
+        public Vector2Int GetRotationOffset(Dir dir)
+        {
+            switch (dir)
+            {
+                default:
+                case Dir.DOWN:  return new Vector2Int(0, 0);
+                case Dir.UP:  return new Vector2Int(width, height);
+                case Dir.LEFT:    return new Vector2Int(0, width);   
+                case Dir.RIGHT: return new Vector2Int(height, 0);
+
+            }
+        }
 
         public List<Vector2Int> GetGridPositionList(Vector2Int offset, Dir dir)
         {
@@ -63,9 +88,9 @@ namespace SOScripts
                     break;
                 case Dir.LEFT:
                 case Dir.RIGHT:
-                    for (int x = 0; x < width; x++)
+                    for (int x = 0; x < height; x++)
                     {
-                        for (int y = 0; y <height; y++)
+                        for (int y = 0; y <width; y++)
                         {
                             gridPositionList.Add(offset +new Vector2Int(x,y));
                             
