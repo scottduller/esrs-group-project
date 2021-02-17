@@ -14,6 +14,7 @@ require('./models/Playlist');
 connectDB();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 if (process.env.NODE_ENV === 'development') {
 	app.use(morgan('dev'));
@@ -38,14 +39,12 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/levels', require('./routes/levelRoutes'));
 app.use('/api/playlists', require('./routes/playlistRoutes'));
-app.use('/api/auth', require('./routes/authRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
 	console.log(`SUCCESS ... Listening on port ${PORT}`);
 });
-
-module.exports = app;

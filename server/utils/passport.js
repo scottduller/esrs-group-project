@@ -1,44 +1,53 @@
+const bcrypt = require('bcryptjs');
+const User = require('../models/User');
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const mongoose = require('mongoose');
-const keys = require('../config/keys');
-
-const User = mongoose.model('User');
+const LocalStrategy = require('passport-local').Strategy;
 
 passport.serializeUser((user, done) => {
 	done(null, user.id);
 });
 
 passport.deserializeUser((id, done) => {
-	User.findById(id).then((user) => {
-		done(null, user);
+	User.findById(id, (err, user) => {
+		done(err, user);
 	});
 });
 
 passport.use(
-	new GoogleStrategy(
-		{
-			callbackURL: '/api/auth/google/callback',
-			clientID: keys.googleClientID,
-			clientSecret: keys.googleClientSecret,
-			proxy: true,
-		},
-		async (accessToken, refreshToken, profile, done) => {
+	new LocalStrategy(
+		{ usernameField: 'email' },
+		async (email, password, done) => {
 			try {
-				const existingUser = await User.findOne({
-					googleId: profile.id,
-				});
-				if (existingUser) {
-					return done(null, existingUser);
+				const user = await User.findOne({ email: email });
+
+				if (!user) {
+					const newUser = new User({ email, password });
+
+					bcrypt.genSalt(10, (err, salt) => {
+						bcrypt.hash(newUser.password, salt, async (err, hash) => {
+							if (err) throw err;
+							newUser.password = hash;
+							user = newUser.save();
+
+							return done(null, user);
+						});
+					});
+				} else {
+					bcrypt.compare(password, user.password, (err, isMatch) => {
+						if (err) throw err;
+
+						if (isMatch) {
+							return done(null, user);
+						} else {
+							return done(null, false, { message: 'Wrong password' });
+						}
+					});
 				}
-				const user = await new User({
-					googleId: profile.id,
-					displayName: profile.displayName,
-				}).save();
-				done(null, user);
 			} catch (err) {
-				done(err, null);
+				return done(null, false, { message: err });
 			}
 		}
 	)
 );
+
+module.exports = passport;
