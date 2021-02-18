@@ -9,25 +9,29 @@ namespace GridBuildSystem
 {
     public class GridBuildingSystem : MonoBehaviour
     {
-        [NonSerialized]  private PlacedObjectTypeSO _placedObjectTypeSo;
+        [NonSerialized] private PlacedObjectTypeSO _placedObjectTypeSo;
         [SerializeField] private List<PlacedObjectTypeSO> placedObjectTypeSoList;
-
+        [SerializeField] public bool DragBuilder;
+        [SerializeField] public Vector2Int initalClickXZ;
+        [SerializeField] public Vector2Int endClickXZ;
         public event EventHandler OnSelectedChanged;
         public event EventHandler OnObjectPlaced;
-    
+
         private GameGrid<GridObject> _grid;
         private PlacedObjectTypeSO.Dir _dir = PlacedObjectTypeSO.Dir.DOWN;
+
         private void Awake()
         {
             var gridWidth = 10;
             var gridHeight = 10;
             var cellSize = 1f;
-            _grid = new GameGrid<GridObject>(gridWidth,gridHeight,cellSize,Vector3.zero,(GameGrid<GridObject> g , int x, int z) => new GridObject(g,x,z),1);
+            _grid = new GameGrid<GridObject>(gridWidth, gridHeight, cellSize, Vector3.zero,
+                (GameGrid<GridObject> g, int x, int z) => new GridObject(g, x, z), 1);
             _placedObjectTypeSo = placedObjectTypeSoList[0];
         }
 
-    
-        public class  GridObject
+
+        public class GridObject
         {
             private readonly GameGrid<GridObject> _grid;
             private readonly int _x;
@@ -39,20 +43,20 @@ namespace GridBuildSystem
                 _grid = grid;
                 _x = x;
                 _z = z;
-            
+
             }
 
             public void SetPlacedObject(PlacedGridObject placedGridObject)
             {
                 _placedGridObject = placedGridObject;
-                _grid.TriggerGridObjectChanged(_x,_z);
+                _grid.TriggerGridObjectChanged(_x, _z);
             }
 
             public PlacedGridObject GetPlacedObject()
             {
                 return _placedGridObject;
             }
-        
+
 
             public bool CanBuild()
             {
@@ -62,7 +66,7 @@ namespace GridBuildSystem
             public void ClearPlacedObject()
             {
                 _placedGridObject = null;
-                _grid.TriggerGridObjectChanged(_x,_z);
+                _grid.TriggerGridObjectChanged(_x, _z);
             }
 
             public override string ToString()
@@ -71,19 +75,121 @@ namespace GridBuildSystem
             }
         }
 
+        private void GetIntialClick()
+        {
+            if (!Input.GetButtonDown("Fire1")) return;
+            Vector3 mouseWorldPosition = UtilsClass.GetMouseWorldPosition();
+            _grid.GetXZ(mouseWorldPosition, out int x, out int z);
+            initalClickXZ = new Vector2Int(x, z);
+        }
+        
+        private static List<Vector2Int> GetAllGridPositions(Vector2Int endPos, Vector2Int startPos)
+        {
+            Vector2Int offset = new Vector2Int(Mathf.Min(startPos.x, endPos.x), Mathf.Min(startPos.y, endPos.y));
+            int loopToX = Math.Abs(startPos.x-endPos.x);
+            int loopToY = Math.Abs(startPos.y-endPos.y);
+            List<Vector2Int> gridPositionList = new List<Vector2Int>();
+            for (int x = 0; x <= loopToX; x++)
+            {
+                for (int y = 0; y <= loopToY; y++)
+                {
+                    
+                    gridPositionList.Add(new Vector2Int(x,y) +  offset);
+                }
+
+            }
+
+            return gridPositionList;
+        }
+
+
+
+
+
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (!DragBuilder)
+            {
+                SingleBuildOnClick();
+                SingleDeleteClick();
+                RotateSelected();
+            }
+            else
+            {
+                GetIntialClick();
+                MultiBuildOnClick();
+
+            }
+            
+            if (Input.GetKeyDown(KeyCode.Alpha1)) _placedObjectTypeSo = placedObjectTypeSoList[0]; RefreshSelectedObjectType();
+
+            if (Input.GetKeyDown(KeyCode.Alpha2)) _placedObjectTypeSo = placedObjectTypeSoList[1]; RefreshSelectedObjectType();
+            if (Input.GetKeyDown(KeyCode.Alpha0)) DeselectObjectType();
+            
+        }
+
+   
+        private void MultiBuildOnClick()
+        {
+            if (Input.GetButtonUp("Fire1"))
+            {
+                _grid.GetXZ(UtilsClass.GetMouseWorldPosition(), out var xEnd, out var zEnd);
+                endClickXZ = new Vector2Int(xEnd, zEnd);
+                
+                List<Vector2Int> gridPositionList = GetAllGridPositions(new Vector2Int(xEnd, zEnd), initalClickXZ);
+                gridPositionList.ForEach(x => Debug.Log(x)); 
+                var canBuild = gridPositionList.All(gridPosition =>
+                    _grid.GetGridObject(gridPosition.x, gridPosition.y).CanBuild());
+
+
+                if (canBuild)
+                {
+
+                    foreach (Vector2Int gridPosition in gridPositionList)
+                    {
+                        int x = gridPosition.x;
+                        int z = gridPosition.y;
+
+                        Vector2Int rotationOffset = _placedObjectTypeSo.GetRotationOffset(_dir);
+                        Vector3 placedObjectWorldPosition = _grid.GetWorldPosition(x, z) +
+                                                            new Vector3(rotationOffset.x, 0, rotationOffset.y) *
+                                                            _grid.GetCellSize();
+
+                        PlacedGridObject placedGridObject = PlacedGridObject.Create(placedObjectWorldPosition,
+                            new Vector2Int(x, z), _dir, _placedObjectTypeSo);
+                        _grid.GetGridObject(gridPosition.x, gridPosition.y).SetPlacedObject(placedGridObject);
+
+
+                        OnObjectPlaced?.Invoke(this, EventArgs.Empty);
+                    }
+                }
+
+                else
+                {
+                    Debug.Log("invalid");
+
+                }
+            }
+        }
+    
+
+
+
+
+
+    private void SingleBuildOnClick()
+        {
+            if (Input.GetButtonUp("Fire1"))
             {
                 _grid.GetXZ(UtilsClass.GetMouseWorldPosition(), out var x, out var z);
 
-                var gridPositionList = _placedObjectTypeSo.GetGridPositionList(new Vector2Int(x, z), _dir);
+                List<Vector2Int> gridPositionList = _placedObjectTypeSo.GetGridPositionList(new Vector2Int(x, z), _dir);
 
                 GridObject gridObject = _grid.GetGridObject(x, z);
                 Vector3 cellPosition = _grid.GetWorldPosition(x, z);
 
                 //testing Can Build
-                var canBuild = gridPositionList.All(gridPosition =>
+                bool canBuild = gridPositionList.All(gridPosition =>
                     _grid.GetGridObject(gridPosition.x, gridPosition.y).CanBuild());
 
 
@@ -112,8 +218,11 @@ namespace GridBuildSystem
 
 
             }
+        }
 
-            if (Input.GetMouseButtonDown(1))
+        private void SingleDeleteClick()
+        {
+            if (Input.GetButtonDown("Fire2"))
             {
                 GridObject gridObject = _grid.GetGridObject(UtilsClass.GetMouseWorldPosition());
                 PlacedGridObject placedGridObject = gridObject.GetPlacedObject();
@@ -126,20 +235,20 @@ namespace GridBuildSystem
                 }
 
             }
+        }
 
-
+        private void RotateSelected()
+        {
             if (Input.GetKeyDown(KeyCode.R))
             {
                 _dir = PlacedObjectTypeSO.GetNextDir(_dir);
                 Debug.Log(_dir);
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha1)) _placedObjectTypeSo = placedObjectTypeSoList[0]; RefreshSelectedObjectType();
-
-            if (Input.GetKeyDown(KeyCode.Alpha2)) _placedObjectTypeSo = placedObjectTypeSoList[1]; RefreshSelectedObjectType();
-            if (Input.GetKeyDown(KeyCode.Alpha0)) DeselectObjectType();
 
         }
+        
+        
 
 
 
