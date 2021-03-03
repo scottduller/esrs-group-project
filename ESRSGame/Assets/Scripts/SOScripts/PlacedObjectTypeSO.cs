@@ -14,6 +14,7 @@ namespace SOScripts
         public int width;
         public int height;
         public LevelTheme levelTheme;
+        public bool dragBuild;
 
         public enum LevelTheme
         {

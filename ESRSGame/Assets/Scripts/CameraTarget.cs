@@ -7,7 +7,7 @@ public class CameraTarget : MonoBehaviour {
 
     public enum Axis {
         XZ,
-        XY
+        XY,
     }
 
     [SerializeField] private Axis axis = Axis.XZ;
@@ -16,13 +16,21 @@ public class CameraTarget : MonoBehaviour {
 
 
     private void Update() {
-        var moveX = 0f;
-        var moveY = 0f;
+        float moveX = 0f;
+        float moveY = 0f;
 
-        if (Input.GetKey(KeyCode.W)) moveY = +1f;
-        if (Input.GetKey(KeyCode.S)) moveY = -1f;
-        if (Input.GetKey(KeyCode.A)) moveX = -1f;
-        if (Input.GetKey(KeyCode.D)) moveX = +1f;
+        if (Input.GetKey(KeyCode.W)) {
+            moveY = +1f;
+        }
+        if (Input.GetKey(KeyCode.S)) {
+            moveY = -1f;
+        }
+        if (Input.GetKey(KeyCode.A)) {
+            moveX = -1f;
+        }
+        if (Input.GetKey(KeyCode.D)) {
+            moveX = +1f;
+        }
 
         Vector3 moveDir;
 
@@ -40,7 +48,9 @@ public class CameraTarget : MonoBehaviour {
             // Not idle
         }
 
-        if (axis == Axis.XZ) moveDir = CmUtilsClass.ApplyRotationToVectorXZ(moveDir, 30f);
+        if (axis == Axis.XZ) {
+            moveDir = CmUtilsClass.ApplyRotationToVectorXZ(moveDir, 30f);
+        }
 
         transform.position += moveDir * moveSpeed * Time.deltaTime;
     }

@@ -18,3 +18,4 @@ MonoBehaviour:
   width: 1
   height: 1
   levelTheme: 0
+  dragBuild: 1

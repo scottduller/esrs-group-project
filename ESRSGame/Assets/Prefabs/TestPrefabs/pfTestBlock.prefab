@@ -9,14 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5140958657712553642}
-  - component: {fileID: 466481415606286667}
   - component: {fileID: -8307240635198830729}
   m_Layer: 0
   m_Name: pfTestBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &5140958657712553642
 Transform:
@@ -33,17 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!154 &466481415606286667
-TerrainCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5140958657712553643}
-  m_Material: {fileID: 0}
-  m_Enabled: 1
-  m_TerrainData: {fileID: 0}
-  m_EnableTreeColliders: 1
 --- !u!114 &-8307240635198830729
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,10 +51,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5140958657712553642}
     m_Modifications:
+    - target: {fileID: 1848226180401043679, guid: ce585a50b7403a84fab995da1ab44efa,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4945135105507578674, guid: ce585a50b7403a84fab995da1ab44efa,
         type: 3}
       propertyPath: m_Name
       value: pfTestBlockVisual
+      objectReference: {fileID: 0}
+    - target: {fileID: 4945135105507578674, guid: ce585a50b7403a84fab995da1ab44efa,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 4945135105507578675, guid: ce585a50b7403a84fab995da1ab44efa,
         type: 3}
@@ -133,7 +131,23 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 4945135106933310623, guid: ce585a50b7403a84fab995da1ab44efa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4945135106933310623, guid: ce585a50b7403a84fab995da1ab44efa,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 6926334967034039990, guid: ce585a50b7403a84fab995da1ab44efa,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4945135106933310616, guid: ce585a50b7403a84fab995da1ab44efa, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ce585a50b7403a84fab995da1ab44efa, type: 3}
 --- !u!4 &5140958658354252782 stripped
 Transform:
