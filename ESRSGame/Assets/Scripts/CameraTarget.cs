@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 using CodeMonkey.Utils;
 
@@ -10,27 +12,72 @@ public class CameraTarget : MonoBehaviour {
         XY,
     }
 
+    
+    [SerializeField] private CinemachineVirtualCamera vCam;
+    [SerializeField] private Vector2Int zoomLimits;
+    [SerializeField] private Vector2Int xRotLimits;
+    [SerializeField] private float zoomSpeed; 
     [SerializeField] private Axis axis = Axis.XZ;
     [SerializeField] private float moveSpeed = 50f;
+    [SerializeField] private float rotSpeed = 1f;
+    private Transform camTransform;
 
 
+    private void Start()
+    {
+        try
+        {
+            camTransform = vCam.GetComponent<Transform>();
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e);
+            throw;
+        }
+        
+    }
 
-    private void Update() {
+
+    private void FixedUpdate() {
+        CameraMovement();
+        CameraScrolling();
+        CameraRotation();
+    }
+
+    private void CameraScrolling()
+    {
+        float scrollVal = -Input.GetAxis("Mouse ScrollWheel");
+        vCam.m_Lens.FieldOfView = Mathf.Lerp(vCam.m_Lens.FieldOfView,Mathf.Clamp(vCam.m_Lens.FieldOfView +  scrollVal * zoomSpeed, zoomLimits.x, zoomLimits.y),0.1f);
+
+    }
+
+    private void CameraRotation()
+    {
+        if (Input.GetButton("Fire3"))
+        {
+            float rotx = Input.GetAxis("Mouse Y");
+            float rotY = Input.GetAxis("Mouse X");
+            {
+                Vector3 currentRot = camTransform.rotation.eulerAngles;
+                camTransform.eulerAngles = (new Vector3(Mathf.Clamp(currentRot.x +rotx*rotSpeed,xRotLimits.x,xRotLimits.y),currentRot.y +rotSpeed  * rotY,currentRot.z));
+            }
+            
+
+            {
+                Vector3 currentRot = camTransform.rotation.eulerAngles;
+                camTransform.eulerAngles = (new Vector3(currentRot.x,currentRot.y +rotSpeed  * rotY,currentRot.z));
+            }
+        }
+    }
+
+
+    private void CameraMovement()
+    {
         float moveX = 0f;
         float moveY = 0f;
 
-        if (Input.GetKey(KeyCode.W)) {
-            moveY = +1f;
-        }
-        if (Input.GetKey(KeyCode.S)) {
-            moveY = -1f;
-        }
-        if (Input.GetKey(KeyCode.A)) {
-            moveX = -1f;
-        }
-        if (Input.GetKey(KeyCode.D)) {
-            moveX = +1f;
-        }
+        moveX = Input.GetAxis("Horizontal_AD");
+        moveY = Input.GetAxis("Vertical_WS");
 
         Vector3 moveDir;
 
@@ -40,7 +87,7 @@ public class CameraTarget : MonoBehaviour {
                 moveDir = new Vector3(moveX, 0, moveY).normalized;
                 break;
             case Axis.XY:
-                moveDir = new Vector3(moveX, moveY).normalized;
+                moveDir = new Vector3(moveX, moveY);
                 break;
         }
         
@@ -49,10 +96,10 @@ public class CameraTarget : MonoBehaviour {
         }
 
         if (axis == Axis.XZ) {
-            moveDir = CmUtilsClass.ApplyRotationToVectorXZ(moveDir, 30f);
+            moveDir = CmUtilsClass.ApplyRotationToVectorXZ(moveDir, camTransform.rotation.eulerAngles.y );
         }
 
-        transform.position += moveDir * moveSpeed * Time.deltaTime;
+        transform.position += moveDir * moveSpeed;
     }
 
 }
