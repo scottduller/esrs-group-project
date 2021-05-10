@@ -29,7 +29,8 @@ public class MeshCombiner : MonoBehaviour
 
     void Update()
     {
-        if (!Input.GetButtonDown(KeyCode.I.ToString())) return;
+        if (!Input.GetKeyDown(KeyCode.Alpha9)) return;
+        
         switch (_mergeType)
         {
             case MergeType.BASIC:

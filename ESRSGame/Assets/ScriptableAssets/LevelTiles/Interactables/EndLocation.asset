@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ef5af70ebb84304996f5e06599715c1, type: 3}
+  m_Name: EndLocation
+  m_EditorClassIdentifier: 
+  nameString: EndPos
+  prefab: {fileID: 2853705934882381443, guid: 4ed63be80c03408449d4c3a85a78b137, type: 3}
+  visual: {fileID: 4777421602948688445, guid: 7efdf3eea00e00543bdc9a3823bd59f6, type: 3}
+  width: 1
+  height: 1
+  levelTheme: 0
+  dragBuild: 0

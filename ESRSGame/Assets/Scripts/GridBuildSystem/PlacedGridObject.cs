@@ -24,16 +24,21 @@ namespace GridBuildSystem
         private PlacedObjectTypeSO _placedObjectTypeSo;
         private Vector2Int _origin;
         private PlacedObjectTypeSO.Dir _dir;
-
+        
         public List<Vector2Int> GetGridPositionList()
         {
             return _placedObjectTypeSo.GetGridPositionList(_origin, _dir);
         }
-    
+
+        public string DataToString()
+        {
+            return LevelBuilderManager.Instance.getIndexFromSo(_placedObjectTypeSo)+","+ UtilsClass.Vector3ToString(transform.position) +","+ UtilsClass.QuaternionToString(transform.rotation);
+        }
         public void DestroySelf()
         {
             Destroy(gameObject);
         }
+        
 
         public override string ToString()
         {

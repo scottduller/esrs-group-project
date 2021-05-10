@@ -20,14 +20,14 @@ public class CameraTarget : MonoBehaviour {
     [SerializeField] private Axis axis = Axis.XZ;
     [SerializeField] private float moveSpeed = 50f;
     [SerializeField] private float rotSpeed = 1f;
-    private Transform camTransform;
+    private Transform _camTransform;
 
 
     private void Start()
     {
         try
         {
-            camTransform = vCam.GetComponent<Transform>();
+            _camTransform = vCam.GetComponent<Transform>();
         }
         catch (Exception e)
         {
@@ -55,17 +55,17 @@ public class CameraTarget : MonoBehaviour {
     {
         if (Input.GetButton("Fire3"))
         {
-            float rotx = Input.GetAxis("Mouse Y");
+            float rotx = -Input.GetAxis("Mouse Y");
             float rotY = Input.GetAxis("Mouse X");
             {
-                Vector3 currentRot = camTransform.rotation.eulerAngles;
-                camTransform.eulerAngles = (new Vector3(Mathf.Clamp(currentRot.x +rotx*rotSpeed,xRotLimits.x,xRotLimits.y),currentRot.y +rotSpeed  * rotY,currentRot.z));
+                Vector3 currentRot = _camTransform.rotation.eulerAngles;
+                _camTransform.eulerAngles = (new Vector3(Mathf.Clamp(currentRot.x +rotx*rotSpeed,xRotLimits.x,xRotLimits.y),currentRot.y +rotSpeed  * rotY,currentRot.z));
             }
             
 
             {
-                Vector3 currentRot = camTransform.rotation.eulerAngles;
-                camTransform.eulerAngles = (new Vector3(currentRot.x,currentRot.y +rotSpeed  * rotY,currentRot.z));
+                Vector3 currentRot = _camTransform.rotation.eulerAngles;
+                _camTransform.eulerAngles = (new Vector3(currentRot.x,currentRot.y +rotSpeed  * rotY,currentRot.z));
             }
         }
     }
@@ -96,7 +96,7 @@ public class CameraTarget : MonoBehaviour {
         }
 
         if (axis == Axis.XZ) {
-            moveDir = CmUtilsClass.ApplyRotationToVectorXZ(moveDir, camTransform.rotation.eulerAngles.y );
+            moveDir = CmUtilsClass.ApplyRotationToVectorXZ(moveDir, _camTransform.rotation.eulerAngles.y );
         }
 
         transform.position += moveDir * moveSpeed;

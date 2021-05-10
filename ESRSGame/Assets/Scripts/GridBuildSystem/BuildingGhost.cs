@@ -50,8 +50,9 @@ namespace GridBuildSystem
         {
             if (!gridBuildingSystem) return;
             Vector3 targetPosition = gridBuildingSystem.GetMouseWorldSnappedPositionSingle();
+            if (targetPosition.Equals(Vector3.negativeInfinity)) return;
             targetPosition.y = 0.01f + GridYOffset;
-
+            
             transform.position = targetPosition;
 
             transform.rotation = Quaternion.Lerp(transform.rotation, gridBuildingSystem.GetPlacedObjectRotation(),
@@ -68,6 +69,7 @@ namespace GridBuildSystem
 
             PlacedObjectTypeSO placedObjectTypeSO = gridBuildingSystem.GetPlacedObjectTypeSo();
 
+            // Debug.Log(placedObjectTypeSO);
             if (placedObjectTypeSO != null)
             {
                 _visual = Instantiate(placedObjectTypeSO.visual, Vector3.zero, Quaternion.identity);

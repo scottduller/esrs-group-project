@@ -13,30 +13,29 @@ namespace GridBuildSystem
     public class GridBuildingSystem : MonoBehaviour
     {
         [NonSerialized] private PlacedObjectTypeSO _placedObjectTypeSo;
-        [SerializeField] internal List<PlacedObjectTypeSO> placedObjectTypeSoList;
 
-        internal bool interactable = false;
-        private bool dragBuilder;
+        internal bool Interactable = false;
+        private bool _dragBuilder;
         public event EventHandler OnSelectedChanged;
         public event EventHandler OnObjectPlaced;
-        private bool intialised = false;
+        private bool _intialised = false;
         private GameGrid<GridObject> _grid;
         private PlacedObjectTypeSO.Dir _dir = PlacedObjectTypeSO.Dir.DOWN;
         private Vector2Int _initalClickXZ1, _intialClickXZ2;
 
 
 
-        public void InitializeGrid(int gridWidth, int gridHeight, float cellSize, Vector3 offset ,int showDebug = 0)
+        public void InitializeGrid(int gridWidth, int gridHeight, float cellSize, Vector3 offset, int showDebug = 0)
         {
             _grid = new GameGrid<GridObject>(gridWidth, gridHeight, cellSize, offset,
                 (GameGrid<GridObject> g, int x, int z) => new GridObject(g, x, z), showDebug);
-            _placedObjectTypeSo = placedObjectTypeSoList[0];
+            _placedObjectTypeSo = null;
             RefreshSelectedObjectType();
-            
-            intialised = true;
+
+            _intialised = true;
 
         }
-        
+
 
 
 
@@ -105,15 +104,15 @@ namespace GridBuildSystem
         private static List<Vector2Int> GetAllGridPositions(Vector2Int endPos, Vector2Int startPos)
         {
             Vector2Int offset = new Vector2Int(Mathf.Min(startPos.x, endPos.x), Mathf.Min(startPos.y, endPos.y));
-            int loopToX = Math.Abs(startPos.x-endPos.x);
-            int loopToY = Math.Abs(startPos.y-endPos.y);
+            int loopToX = Math.Abs(startPos.x - endPos.x);
+            int loopToY = Math.Abs(startPos.y - endPos.y);
             List<Vector2Int> gridPositionList = new List<Vector2Int>();
             for (int x = 0; x <= loopToX; x++)
             {
                 for (int y = 0; y <= loopToY; y++)
                 {
-                    
-                    gridPositionList.Add(new Vector2Int(x,y) +  offset);
+
+                    gridPositionList.Add(new Vector2Int(x, y) + offset);
                 }
 
             }
@@ -121,12 +120,12 @@ namespace GridBuildSystem
             return gridPositionList;
         }
 
-        public void SetInteractable(bool interactabler)
+        public void SetInteractable(bool interactable)
         {
-            this.interactable = interactabler;
+            this.Interactable = interactable;
         }
 
-        public bool GetIsDragBuilder() => dragBuilder;
+        public bool GetIsDragBuilder() => _dragBuilder;
 
         public float GetGridYOffset() => _grid.GetWorldPosition(0, 0).y;
 
@@ -135,9 +134,9 @@ namespace GridBuildSystem
 
         private void Update()
         {
-            if (intialised && interactable)
+            if (_intialised && Interactable)
             {
-                if (!dragBuilder)
+                if (!_dragBuilder)
                 {
                     SingleBuildOnClick();
                     SingleDeleteClick();
@@ -150,24 +149,26 @@ namespace GridBuildSystem
                     MultipleDeleteClick();
 
                 }
-
-                if (Input.GetKeyDown(KeyCode.Alpha1)) _placedObjectTypeSo = placedObjectTypeSoList[0];
-                RefreshSelectedObjectType();
-
-                if (Input.GetKeyDown(KeyCode.Alpha2)) _placedObjectTypeSo = placedObjectTypeSoList[1];
-                RefreshSelectedObjectType();
-                if (Input.GetKeyDown(KeyCode.Alpha0)) DeselectObjectType();
+                
             }
 
         }
 
-   
+        public void ChangeItem(PlacedObjectTypeSO placedObjectTypeSo)
+        {
+            _placedObjectTypeSo = placedObjectTypeSo;
+            RefreshSelectedObjectType();
+        }
+
+
         private void MultiBuildOnClick()
         {
+            if (!_placedObjectTypeSo) return;
             if (Input.GetButtonUp("Fire1"))
             {
-                _grid.GetXZ(UtilsClass.GetMouseWorldPosition(), out var xEnd, out var zEnd);
-
+                Vector3 worldPos = UtilsClass.GetMouseWorldPosition();
+                if(worldPos.Equals(Vector3.negativeInfinity)) return;
+                _grid.GetXZ(worldPos, out var xEnd, out var zEnd);
                 List<Vector2Int> gridPositionList = GetAllGridPositions(new Vector2Int(xEnd, zEnd), _initalClickXZ1);
                 // gridPositionList.ForEach(x => Debug.Log(x)); 
                 var canBuild = gridPositionList.All(gridPosition =>
@@ -211,7 +212,8 @@ namespace GridBuildSystem
 
     private void SingleBuildOnClick()
         {
-            if (Input.GetButtonUp("Fire1"))
+            if (!_placedObjectTypeSo) return;
+            if (Input.GetButtonUp("Fire1") )
             {
                 _grid.GetXZ(UtilsClass.GetMouseWorldPosition(), out var x, out var z);
 
@@ -219,12 +221,11 @@ namespace GridBuildSystem
 
                 GridObject gridObject = _grid.GetGridObject(x, z);
                 Vector3 cellPosition = _grid.GetWorldPosition(x, z);
-
+                gridPositionList.ForEach(a => Debug.Log(_grid.GetGridObject(a.x, a.y).CanBuild()));
                 //testing Can Build
                 bool canBuild = gridPositionList.All(gridPosition =>
                     _grid.GetGridObject(gridPosition.x, gridPosition.y).CanBuild());
-
-
+                
                 if (canBuild)
                 {
                     Vector2Int rotationOffset = _placedObjectTypeSo.GetRotationOffset(_dir);
@@ -234,7 +235,7 @@ namespace GridBuildSystem
 
                     PlacedGridObject placedGridObject = PlacedGridObject.Create(placedObjectWorldPosition,
                         new Vector2Int(x, z), _dir, _placedObjectTypeSo,transform);
-
+ 
 
                     foreach (Vector2Int gridPosition in gridPositionList)
                         _grid.GetGridObject(gridPosition.x, gridPosition.y).SetPlacedObject(placedGridObject);
@@ -307,12 +308,16 @@ namespace GridBuildSystem
 
 
         private void DeselectObjectType() {
-            _placedObjectTypeSo = null; RefreshSelectedObjectType();
+            _placedObjectTypeSo = null; 
+            RefreshSelectedObjectType();
         }
 
         private void RefreshSelectedObjectType()
         {
-            dragBuilder = _placedObjectTypeSo.dragBuild;
+            if (_placedObjectTypeSo)
+            {
+                _dragBuilder = _placedObjectTypeSo.dragBuild;
+            }
             OnSelectedChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -324,7 +329,7 @@ namespace GridBuildSystem
 
         public bool GetMulti()
         {
-            return dragBuilder;
+            return _dragBuilder;
         }
 
         public Vector3 GetMouseWorldSnappedPositionSingle() {
@@ -396,7 +401,7 @@ public class GridBuilderEditor : Editor
     {
         base.OnInspectorGUI();
         var script = target as GridBuildingSystem;
-        GUILayout.Label("  Interactable: "+script.interactable.ToString());
+        GUILayout.Label("  Interactable: "+script.Interactable.ToString());
         
 
  

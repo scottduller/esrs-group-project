@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ef5af70ebb84304996f5e06599715c1, type: 3}
+  m_Name: StartLocation
+  m_EditorClassIdentifier: 
+  nameString: StartPos
+  prefab: {fileID: 2853705934882381443, guid: 749abde95d1607843ac0a03546269067, type: 3}
+  visual: {fileID: 4777421602948688445, guid: 1f3c7010dd802fb4d80209963b7b3418, type: 3}
+  width: 1
+  height: 1
+  levelTheme: 0
+  dragBuild: 0
